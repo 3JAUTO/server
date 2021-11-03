@@ -1,0 +1,14 @@
+# http server listen address
+addr: localhost:8080
+# log file path, also stdout stderr is acceptable
+logfile: stdout
+# log level: info warn debug error fatal panic
+loglevel: debug
+# database url
+db_url: localhost:3306
+# database user
+db_user: root
+# database password
+db_password: somepassword
+# database name
+db_name: mydb

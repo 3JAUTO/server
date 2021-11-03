@@ -1,0 +1,10 @@
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: make init
+  displayName: 'init'
+
+- script: make check
+  displayName: 'check'
+

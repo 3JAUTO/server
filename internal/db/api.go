@@ -12,8 +12,6 @@ import (
 
 var db *gorm.DB
 
-type M = map[string]interface{}
-
 // Init initialize database
 func Init(connStr string, dbname string) error {
 	log.Debug("connecting to database", zap.String("connstr", connStr))

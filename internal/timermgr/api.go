@@ -48,7 +48,9 @@ func (tm *TimerMgr) DispatchTimer(typ TimerType, execTs int64, args util.M) int6
 		itimer := tm.timers[inMeta._type]
 		now := <-inMeta._raw.C
 		itimer.Call(now.UnixNano(), inMeta._args)
+		inMeta._raw.Stop()
 		delete(tm.onTimers, timerID)
+
 	}(id)
 	return id
 }
@@ -72,8 +74,25 @@ func (tm *TimerMgr) DispatchTicker(typ TimerType, gapTs int64, args util.M) int6
 	go func(tickerID int64) {
 		inMeta := tm.onTickers[tickerID]
 		itimer := tm.timers[inMeta._type]
-		now := <-inMeta._raw.C
-		itimer.Call(now.UnixNano(), inMeta._args)
+		for now := range inMeta._raw.C {
+			itimer.Call(now.UnixNano(), inMeta._args)
+		}
+		inMeta._raw.Stop()
+		delete(tm.onTickers, tickerID)
 	}(id)
 	return id
+}
+
+func (tm *TimerMgr) StopTimer(id int64) {
+	if meta := tm.onTimers[id]; meta != nil {
+		meta._raw.Stop()
+		delete(tm.onTimers, id)
+	}
+}
+
+func (tm *TimerMgr) StopTicker(id int64) {
+	if meta := tm.onTickers[id]; meta != nil {
+		meta._raw.Stop()
+		delete(tm.onTickers, id)
+	}
 }
